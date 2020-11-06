@@ -27,23 +27,24 @@ void status(struct object *aux, FILE *fp){  // mostra o estado da memória
 void atrib2(struct object **p, struct object **q, FILE *fp){   // realiza a atribuicao de ponteiros
 	struct object *temp;  //variavel temporaria para armazenar o endereco que mudou seu apontamento
 	if(q != NULL){
-        temp = (*p);
-        (*p) = (*q);
-        (*q)->cont++;
-        temp->cont--;
+        	temp = (*p);
+        	(*p) = (*q);
+        	(*q)->cont++;
+        	temp->cont--;
 
-        if (temp->cont==0){
-            fprintf(fp, "A area %d agora tem 0 apontamentos e foi liberada\n", temp);
-            free(temp);
-        }
+        	if (temp->cont==0){
+            		fprintf(fp, "A area %d agora tem 0 apontamentos e foi liberada\n", temp);
+            		free(temp);
+        	}
 	}else{
-       temp = (*p);
-       (*p) = NULL;
-       temp->cont--;
-       if (temp->cont==0){
-            fprintf(fp, "A area %d agora tem 0 apontamentos e foi liberada\n", temp);
-            free(temp);
-        }
-	  }
+       		temp = (*p);
+       		(*p) = NULL;
+       		temp->cont--;
+       		
+		if (temp->cont==0){
+            		fprintf(fp, "A area %d agora tem 0 apontamentos e foi liberada\n", temp);
+            		free(temp);
+        	}
+	}
 }
 
