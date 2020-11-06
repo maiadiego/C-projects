@@ -7,12 +7,12 @@ struct object *malloc2(int tamanho){  // aloca a struct
 }
 
 void atrib(void* x, struct object *p){  // coloca o valor na area de endereco passada
-    p->value = x;
+    	p->value = x;
 }
 
 void statusdeclaracao(struct object *aux, FILE *fp){
 
-    fprintf(fp, "Foi declarado o ponteiro no endereco %d\n\n", aux);
+    	fprintf(fp, "Foi declarado o ponteiro no endereco %d\n\n", aux);
 
 }
 
