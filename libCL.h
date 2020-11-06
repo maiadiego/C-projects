@@ -5,15 +5,15 @@
 #include <stdio.h>
 
 struct object{
-	int value;
+	void* value;
 	int cont;
 };
 
-struct object *malloc2();
-void atrib(int, struct object *);
+struct object *malloc2(int);
+void atrib(void*, struct object *);
 void statusdeclaracao(struct object *, FILE *);
 void status(struct object *, FILE *);
-struct object *atrib2(struct object **, struct object **, FILE *);
+void atrib2(struct object **, struct object **, FILE *);
 
 
 #endif // LIBCL_H_INCLUDED

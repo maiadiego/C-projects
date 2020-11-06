@@ -1,12 +1,12 @@
 #include "libCL.h"
 
-struct object *malloc2(){  // aloca a struct
-	struct object *aux = (struct object *) malloc(sizeof(struct object));
+struct object *malloc2(int tamanho){  // aloca a struct
+	struct object *aux = (struct object *) malloc(tamanho);
 	aux->cont = 1;
 	return aux;
 }
 
-void atrib(int x, struct object *p){  // coloca o valor na área de endereço passada
+void atrib(void* x, struct object *p){  // coloca o valor na área de endereço passada
 	p->value = x;
 }
 
@@ -24,7 +24,7 @@ void status(struct object *aux, FILE *fp){  // mostra o estado da memória
 
 }
 
-struct object *atrib2(struct object **p, struct object **q, FILE *fp){   // realiza a atribuição de ponteiros
+void atrib2(struct object **p, struct object **q, FILE *fp){   // realiza a atribuição de ponteiros
 	struct object *temp;  //variável temporária para armazenar o endereço que mudou seu apontamento
 	if(q != NULL){
         temp = (*p);
@@ -36,7 +36,6 @@ struct object *atrib2(struct object **p, struct object **q, FILE *fp){   // real
             fprintf(fp, "A area %d agora tem 0 apontamentos e foi liberada\n", temp);
             free(temp);
         }
-        return (*q);
 	}else{
        temp = (*p);
        (*p) = NULL;
@@ -45,6 +44,6 @@ struct object *atrib2(struct object **p, struct object **q, FILE *fp){   // real
             fprintf(fp, "A area %d agora tem 0 apontamentos e foi liberada\n", temp);
             free(temp);
         }
-	   return NULL;
 	}
 }
+

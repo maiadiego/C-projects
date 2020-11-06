@@ -13,9 +13,12 @@ int main(){
         fprintf(fp, "------Ponteiro w------\n");
         struct object *w;
         statusdeclaracao(w, fp);
+        fprintf(fp, "------Ponteiro c------\n");
+        struct object *c;
+        statusdeclaracao(c, fp);
 
         fprintf(fp, "------Ponteiro v------\n");
-        v = malloc2();
+        v = malloc2(sizeof(int));
         atrib(10, v);
         if(v == NULL)
             fprintf(fp, "O ponteiro agora e nulo\n\n");
@@ -23,15 +26,15 @@ int main(){
             status(v, fp);
 
         fprintf(fp, "------Ponteiro w------\n");
-        w = malloc2();
+        w = malloc2(sizeof(int));
         atrib(20, w);
         if(w == NULL)
             fprintf(fp, "O ponteiro agora e nulo\n\n");
         else
             status(w, fp);
 
-        fprintf(fp, "------Ponteiro v------\n");
-        v = atrib2(&v, &w, fp); // v apontará para o mesmo lugar que w
+		fprintf(fp, "------Ponteiro v------\n");
+        atrib2(&v, &w, fp); // v apontará para o mesmo lugar que w
         if(v == NULL)
             fprintf(fp, "O ponteiro agora e nulo\n\n");
         else
@@ -43,8 +46,17 @@ int main(){
         else
             status(w, fp);
 
+		fprintf(fp, "------Ponteiro c------\n");
+        c = malloc2(sizeof(char));
+        atrib('Z', c);
+        if(c == NULL)
+            fprintf(fp, "O ponteiro agora e nulo\n\n");
+        else
+            status(c, fp);
+
+
         fprintf(fp, "------Ponteiro v------\n");
-        v = atrib2(&v, NULL, fp);
+        atrib2(&v, NULL, fp);
         if(v == NULL)
             fprintf(fp, "O ponteiro agora e nulo\n\n");
         else
