@@ -210,40 +210,40 @@ int main(){
                         cout << palavras[i].linhas[j] << " ";
                     cout << "\n";
                 } */
-                do{
-                    cout << "\n1: Buscar palavra \n";
-                    cout << "2: Sair \n";
-                    cout << "Opcao: ";
-                    cin >> op2;
-                    cout << "\n";
-
-                    if(op2 == 1){
-                        cout << "Digite a palavra a ser buscada: ";
-                        cin >> palavra;
+                    do{
+                        cout << "\n1: Buscar palavra \n";
+                        cout << "2: Sair \n";
+                        cout << "Opcao: ";
+                        cin >> op2;
                         cout << "\n";
 
-                            sizelist = palavras.size();
+                        if(op2 == 1){
+                            cout << "Digite a palavra a ser buscada: ";
+                            cin >> palavra;
+                            cout << "\n";
 
-                            if(Existe(palavras, palavra)){
-                                for(int i=0; i<sizelist; i++){   // percorre a lista
-                                    if(palavras[i].letras == palavra){ // achou a posição da palavra
-                                        cout << "Qtd de ocorrencias --> " << palavras[i].linhas.size() << endl;
+                                sizelist = palavras.size();
 
-                                        for(int j=0; j<palavras[i].linhas.size(); j++){
-                                            cout << "Linhas --> " << palavras[i].linhas[j] << endl;
+                                if(Existe(palavras, palavra)){
+                                    for(int i=0; i<sizelist; i++){   // percorre a lista
+                                        if(palavras[i].letras == palavra){ // achou a posição da palavra
+                                            cout << "Qtd de ocorrencias --> " << palavras[i].linhas.size() << endl;
+
+                                            for(int j=0; j<palavras[i].linhas.size(); j++){
+                                                cout << "Linhas --> " << palavras[i].linhas[j] << endl;
+                                            }
                                         }
                                     }
+
+                                }else{
+                                    cout << "Palavra nao encontrada! \n\n";
                                 }
+                        }
 
-                            }else{
-                                cout << "Palavra nao encontrada! \n\n";
-                            }
-                    }
-
-                }while(op2 != 2);
+                    }while(op2 != 2);
                 }
                 break;
-        }
+            }
 
     }while(op != 3);
 
