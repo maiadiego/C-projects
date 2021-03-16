@@ -180,14 +180,6 @@ int main(){
                         cout << "Erro ao abrir arquivo!" << "\n";
 
                     GeraArqBin(palavras, outfile);
-
-                    //TESTE
-                    /*for(int j = 0; j < palavras.size(); j++){
-                        cout << palavras[j].letras << "-> ";
-                        for(int k = 0; k < palavras[j].linhas.size(); k++)
-                            cout << palavras[j].linhas[k] << " ";
-                        cout << "\n";
-                    }*/
                     }
                 break;
 
@@ -202,14 +194,6 @@ int main(){
                 else{
                     LerArqBin(palavras, infile);
 
-                //TESTE
-                /*cout << "Testando: " << "\n";
-                for(int i = 0; i < palavras.size(); i++){
-                    cout << palavras[i].letras << " -> ";
-                    for(int j = 0; j < palavras[i].linhas.size(); j++)
-                        cout << palavras[i].linhas[j] << " ";
-                    cout << "\n";
-                } */
                     do{
                         cout << "\n1: Buscar palavra \n";
                         cout << "2: Sair \n";
@@ -242,13 +226,13 @@ int main(){
 
                     }while(op2 != 2);
                 }
+                infile.close();
                 break;
             }
 
     }while(op != 3);
 
     arq.close();
-    infile.close();
 
     return 0;
 }
