@@ -13,7 +13,7 @@ struct Ocorrencia{
     int qtdOcorrencias;
     vector<int> linhas = {};
     
-}
+};
 struct Palavra{
     string letras;
     //vector<int> linhas = {};
@@ -26,7 +26,7 @@ struct Indice{
     vector<string> arquivos = {}; // lista contendo o nome dos arquivos já processados (struct Arquivo virou isso eu acho)
     int qtdPalavras;
     vector<struct Palavra> palavras = {};   // lista contendo todas as palavras já processadas
-} 
+};
 
 int ProcessaArq(vector<string> &arquivos, vector<struct Palavra> &palavras){ // essas duas listas estão dentro de Struct Indice 
     ifstream arq;
