@@ -38,13 +38,11 @@ bool JaFoiLido(vector<string> arquivos, string nomeArq){
 
 //VERIFICA SE A PALAVRA JÁ EXISTE NA LISTA
 bool ExistePalavra(vector<struct Palavra> lista, string palavra){
-
     int sizelist = lista.size();
     for(int i = 0; i<sizelist; i++){
         if(lista[i].letras == palavra)
             return true;
     }
-
     return false;
 }
 
@@ -96,18 +94,18 @@ void InsereOrdem(struct Indice &indice, string palavra, int linha, int arquivo){
     nova.ocorrencias.push_back(ocorrencia);
 
     int sizelist = indice.palavras.size();
-    for(int i = 0; i <sizelist; i ++){
-        if(indice.palavras[i].letras < nova.letras){
-            indice.palavras.insert(indice.palavras.begin() + i + 1, nova);
+    int i;
+    for(i = 0; i <sizelist; i ++){
+        if(nova.letras < indice.palavras[i].letras)
             break;
-        }
     }
+
+    indice.palavras.insert(indice.palavras.begin() + i, nova);
 
 }
 
 //LE AS PALAVRAS DE UM ARQUIVO
 void LePalavras(struct Indice &indice, ifstream &arq){
-
     string linha;
     //LENDO CADA PALAVRA SEPARADAMENTE
     for(int i=1; getline(arq, linha); i++){
@@ -118,9 +116,7 @@ void LePalavras(struct Indice &indice, ifstream &arq){
             if(ExistePalavra(indice.palavras, buf))
                 InsereLinha(indice.palavras, buf, i, indice.arquivos.size());
             else
-                InsereOrdem(indice, buf, i, indice.arquivos.size()); //INSERIR EM ORDEM ALFABETICA E UMA PRIMEIRA ENTRADA NA LISTA DE OCORRENCIA
-                                               //INT REPRESENTANDO A POSIÇÃO NA LISTA DE ARQUIVOS DO ARQUIVO QUE ELA OCORREU
-                                             //QUAIS LINHAS ELA FOI ENCONTRADA
+                InsereOrdem(indice, buf, i, indice.arquivos.size());
         }
     }
 }
@@ -279,13 +275,14 @@ int main(){
 
     }while(op != 3);
 
-    for(int i = 0; i < indice.arquivos.size(); i++){
+    /*for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
-    }
+    }*/
     for(int i = 0; i < indice.palavras.size(); i ++){
-        cout << indice.palavras[i].letras << " ";
+        cout << "Palavra: " << indice.palavras[i].letras << " ";
         for(int j = 0; j < indice.palavras[i].ocorrencias.size(); j++){
-            cout << indice.palavras[i].ocorrencias[j].arquivo << " ";
+            cout << "Arquivo: ";
+            cout << indice.palavras[i].ocorrencias[j].arquivo << " Linhas: ";
             for(int k = 0; k < indice.palavras[i].ocorrencias[j].linhas.size(); k++){
                 cout << indice.palavras[i].ocorrencias[j].linhas[k] << " ";
             }
