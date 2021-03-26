@@ -46,7 +46,6 @@ bool ExistePalavra(vector<struct Palavra> lista, string palavra){
     return false;
 }
 
-
 //VERIFICA SE O ARQUIVO JÁ ESTÁ NA LISTA DE OCORRÊNCIAS
 bool ExisteArquivo(vector<struct Ocorrencia> ocorrencias, int arquivo){
     int sizelist = ocorrencias.size();
@@ -101,7 +100,6 @@ void InsereOrdem(struct Indice &indice, string palavra, int linha, int arquivo){
     }
 
     indice.palavras.insert(indice.palavras.begin() + i, nova);
-
 }
 
 //LE AS PALAVRAS DE UM ARQUIVO
@@ -143,6 +141,89 @@ void ProcessaArq(struct Indice &indice){
     arq.close();
 }
 
+void SalvaIndice(struct Indice &indice){
+    ofstream outfile;
+    outfile.open("indice.dat", ios :: binary | ios :: out);
+    if(!outfile.is_open())
+        cout << "Erro ao abrir o arquivo" << "\n";
+
+    else{
+        int qtdArquivos = indice.arquivos.size();
+        outfile.write (reinterpret_cast<char*>(&qtdArquivos), sizeof (qtdArquivos));
+        for(int i=0; i<qtdArquivos; i++){
+            int qtdLetrasArq = indice.arquivos[i].size();
+            outfile.write (reinterpret_cast<char*>(&qtdLetrasArq), sizeof (qtdLetrasArq));
+            outfile.write(&indice.arquivos[i], sizeof(char));
+        }
+        // palavras diferentes que foram encontradas
+        int qtdPalavras = indice.palavras.size();
+        outfile.write (reinterpret_cast<char*>(&qtdPalavras), sizeof (qtdPalavras));
+
+        for(int j=0; j<qtdPalavras; j++){
+            int qtdLetrasPalavra = indice.palavras[j].letras.size();
+            int qtdOcorrencias = indice.palavras[j].ocorrencias.size();
+            outfile.write (reinterpret_cast<char*>(&qtdLetrasPalavra), sizeof (qtdLetrasPalavra));
+            outfile.write(&indice.palavras[j].letras, sizeof(char));
+            outfile.write (reinterpret_cast<char*>(&qtdOcorrencias), sizeof (qtdOcorrencias));
+
+            for(int k=0; k<qtdOcorrencias; k++){
+                int idArq = indice.palavras[j].ocorrencias[k].arquivo;
+                int size_linhas = indice.palavras[j].ocorrencias[k].linhas.size();
+                outfile.write (reinterpret_cast<char*>(&idArq), sizeof (idArq));
+                outfile.write (reinterpret_cast<char*>(&size_linhas), sizeof (size_linhas));
+
+                for(int x=0; x<size_linhas; x++){
+                    int linha = indice.palavras[j].ocorrencias[k].linhas[x];
+                    outfile.write (reinterpret_cast<char*>(&linha), sizeof (linha));
+                }
+            }
+        }
+    }
+
+    outfile.close();
+}
+
+/*
+void LerIndice(struct Indice &indice){
+    ifstream infile;
+    infile.open ("indice.dat", ios :: binary | ios :: out);
+    if(!infile.is_open())
+        cout << "Erro ao abrir arquivo!" << "\n";
+
+    else{
+        struct Palavra nova;
+        int qtdArquivos;
+        infile.read(reinterpret_cast<char*>(&qtdArquivos), sizeof(int));
+
+        // lendo os arquivos
+        for(int i=0; i<qtdArquivos; i++){
+            infile.read(reinterpret_cast<char*>(&qtdArquivos), sizeof(int));
+            int qtdLetrasArq;
+            infile.read(reinterpret_cast<char*>(&qtdLetrasArq), sizeof(int));
+            // lendo string
+            nova = {};
+            char cstr[qtdLetrasArq];
+            for(int j = 0; j < qtdLetrasArq; j++){
+                infile.read (&cstr[j], sizeof(char));
+                nova.letras.push_back(cstr[j]);
+            }
+        }
+
+        // lendo as palavras
+        int qtdPalavras;
+        infile.read(reinterpret_cast<char*>(&qtdPalavras), sizeof(int));
+        for(int k=0; k<qtdPalavras; k++){
+            int qtdLetrasPalavra;
+            int qtdOcorrencias;
+            infile.read(reinterpret_cast<char*>(&qtdLetrasPalavra), sizeof (qtdLetrasPalavra));
+            infile.read();      // ler uma string
+            infile.read(reinterpret_cast<char*>(&qtdOcorrencias), sizeof (qtdOcorrencias));
+
+            // falta mais coisa
+    }
+
+} */
+
 /*void GeraArqBin(vector<struct Palavra> &palavras){
     ofstream outfile;
     outfile.open ("indice.dat", ios :: binary | ios :: out);
@@ -151,12 +232,10 @@ void ProcessaArq(struct Indice &indice){
     else{
         int n = palavras.size();
         outfile.write (reinterpret_cast<char*>(&n), sizeof (n)); // qtd de palavras
-
         for(int i=0; i<n; i++){
             int sizeWord = palavras[i].letras.size();
             string word = palavras[i].letras;
             int sizeVet = palavras[i].linhas.size();
-
             cout << "na gera: ";
             outfile.write(reinterpret_cast<char*>(&sizeWord), sizeof(int)); // qtd caracteres
             for(int j = 0; j < sizeWord; j++){
@@ -164,7 +243,6 @@ void ProcessaArq(struct Indice &indice){
                 cout << palavras[i].letras[j];
             }
             cout << "\n";
-
             outfile.write(reinterpret_cast<char*>(&sizeVet), sizeof(int)); // qtd ocorrências
             for(int k=0; k<sizeVet; k++){
                 outfile.write(reinterpret_cast<char*>(&(palavras[i].linhas[k])), sizeof(int)); // vetor de linhas
@@ -174,8 +252,9 @@ void ProcessaArq(struct Indice &indice){
         }
     }
     outfile.close();
-}
+} */
 
+/*
 void LerArqBin(vector<struct Palavra> &lista){
     ifstream infile;
     infile.open ("indice.dat", ios :: binary | ios :: out);
@@ -184,32 +263,24 @@ void LerArqBin(vector<struct Palavra> &lista){
     else{
          int n;
          struct Palavra nova;
-
          infile.read(reinterpret_cast<char*>(&n), sizeof(int));  //  qtd palavras
-
         for(int i = 0; i < n; i++){
             int qtdChar, qtdOcorrencias;
             nova = {};
-
             infile.read (reinterpret_cast<char*>(&qtdChar), sizeof(int));    // qtdcaracteres
-
             char cstr[qtdChar];
             for(int j = 0; j < qtdChar; j++){
                 infile.read (&cstr[j], sizeof(char));
                 nova.letras.push_back(cstr[j]);
             }
-
             infile.read (reinterpret_cast<char*>(&qtdOcorrencias), sizeof(int));
-
             for(int k=0; k<qtdOcorrencias; k++){
                 int linha;
                 infile.read(reinterpret_cast<char*>(&linha), sizeof(int));
                 nova.linhas.push_back(linha);
             }
-
             lista.push_back(nova);
         }
-
         // loop para buscar palavras
         do{
             int op;
@@ -223,39 +294,32 @@ void LerArqBin(vector<struct Palavra> &lista){
                 cout << "Digite a palavra a ser buscada: ";
                 cin >> palavra;
                 cout << "\n";
-
                 int sizelist = lista.size();
-
                 if(Existe(lista, palavra)){
                     for(int i=0; i<sizelist; i++){   // percorre a lista
                         if(lista[i].letras == palavra){ // achou a posição da palavra
                             cout << "Qtd de ocorrencias --> " << lista[i].linhas.size() << endl;
-
                             for(int j=0; j<lista[i].linhas.size(); j++){
                                 cout << "Linhas --> " << lista[i].linhas[j] << endl;
                             }
                         }
                     }
-
                 }else{
                     cout << "Palavra nao encontrada! \n\n";
                     }
                 }
-
             }while(op != 2);
     }
-
     infile.close();
-}
+} */
 
-*/
 int main(){
     int op;
     struct Indice indice = {};
 
     //MENU
     do{
-        cout << "Escolha a opcao desejada\n" << "1-Processar um arquivo texto;\n" << "2-Utilizar um indice existente para realizar buscas por palavras;\n" << "3-Encerrar o programa." << "\n\n";
+        cout << "Escolha a opcao desejada\n" << "1-Processar um arquivo texto;\n" << "3-Utilizar um indice existente para realizar buscas por palavras;\n" << "3-Encerrar o programa." << "\n\n";
         cout << "Opcao: ";
         cin >> op;
         if(op != 1 && op != 2 && op != 3)
@@ -268,8 +332,7 @@ int main(){
 
 
             case 2:
-                //palavras = {};
-                //LerArqBin(palavras);
+                SalvaIndice(indice);
                 break;
         }
 
@@ -278,16 +341,43 @@ int main(){
     /*for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
     }*/
+
+    /* TESTE PALAVRAS EM ORDEM
     for(int i = 0; i < indice.palavras.size(); i ++){
-        cout << "Palavra: " << indice.palavras[i].letras << " ";
+        cout << "Palavra: " << indice.palavras[i].letras << " \n";
         for(int j = 0; j < indice.palavras[i].ocorrencias.size(); j++){
             cout << "Arquivo: ";
-            cout << indice.palavras[i].ocorrencias[j].arquivo << " Linhas: ";
+            cout << indice.palavras[i].ocorrencias[j].arquivo << "\nLinhas: ";
             for(int k = 0; k < indice.palavras[i].ocorrencias[j].linhas.size(); k++){
                 cout << indice.palavras[i].ocorrencias[j].linhas[k] << " ";
             }
         }
         cout << "\n\n";
     }
+
+    */
+
+    // TESTE LER ARQ BIN E BUSCAR PALAVRAS
+    /*
+    int op2;
+    do{
+        cout << "1-Buscar palavra;\n" << "2-Sair." << "\n\n";
+        cout << "Opcao: ";
+        cin >> op2;
+
+        switch(op2){
+            case 1:
+                indice = {};
+                LerIndice(indice);
+
+
+        }
+
+    }while(op != 2);
+
+
+
+    */
+
     return 0;
 }
