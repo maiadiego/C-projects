@@ -10,60 +10,34 @@ using namespace std;
 
 struct Ocorrencia{
     int arquivo;
-    int qtdOcorrencias;
     vector<int> linhas = {};
-    
+
 };
 struct Palavra{
     string letras;
-    //vector<int> linhas = {};
     vector<struct Ocorrencia> ocorrencias = {};
-    int qtdOcorrencias; // quantidade de arquivos que possuem essa palavra
 };
 
 struct Indice{
-    int qtdArquivos;  // qtd de arquivos lidos até então 
-    vector<string> arquivos = {}; // lista contendo o nome dos arquivos já processados (struct Arquivo virou isso eu acho)
-    int qtdPalavras;
-    vector<struct Palavra> palavras = {};   // lista contendo todas as palavras já processadas
+    vector<string> arquivos = {}; // Arquivos já lidos e QtdArquivos vai ser o size
+    vector<struct Palavra> palavras = {};   // palavras do indice e QtdPalavras vai ser o size
 };
 
-int ProcessaArq(vector<string> &arquivos, vector<struct Palavra> &palavras){ // essas duas listas estão dentro de Struct Indice 
-    ifstream arq;
-    cout << "Digite o nome do arquivo texto com extensao: ";
-    cin >> nomeArq;
-    
-    // verifica se o arquivo já foi lido
+//VERIFICA SE UM ARQUIVO JA FOI LIDO
+bool JaFoiLido(vector<string> arquivos, string nomeArq){
+
     int sizeArqs = arquivos.size();
-    for(int i=0; i<sizeArqs; i++){
-        if(arquivos[i] == nomeArq){
-            return 0;
-        }
+    for(int i = 0; i < sizeArqs; i++){
+        if(arquivos[i] == nomeArq)
+            return true;
     }
-    // se não foi lido insere
-    arquivos.push_back(nomeArq)
-    arq.open(nomeTexto);
-    if(!arq.is_open())
-        cout << "Erro ao abrir arquivo!" << "\n";
-    
-    string linha;
-    for(int i=1; getline(arq, linha); i++){
-        string buf; // VARIAVEL PARA RECEBER AS PALAVRAS CONTIDAS EM CADA LINHA
-        stringstream ss(linha); //TRANSFORMA A STRING EM UMA STREAM
-        while (ss >> buf){
-            if(Existe(palavras, buf))
-                InsereLinha(palavras, buf, i);
-                // falta incrementar a lista de ocorrências dentro de struct Palavra
-            else
-                InsereOrdem(palavras, buf, i);
-                // falta incrementar a lista de ocorrências dentro de struct Palavra
-        }
-    }
-    
-    return 1; // arquivo foi processado 
+
+    return false;
+
 }
+
 //VERIFICA SE A PALAVRA JÁ EXISTE NA LISTA
-bool Existe(vector<struct Palavra> lista, string palavra){
+bool ExistePalavra(vector<struct Palavra> lista, string palavra){
 
     int sizelist = lista.size();
     for(int i = 0; i<sizelist; i++){
@@ -73,69 +47,107 @@ bool Existe(vector<struct Palavra> lista, string palavra){
 
     return false;
 }
-//ORDENA A LISTA EM ORDEM ALFABETICA
-void Ordena(vector<struct Palavra> &lista){
-    int sizelist = lista.size();
+
+
+//VERIFICA SE O ARQUIVO JÁ ESTÁ NA LISTA DE OCORRÊNCIAS
+bool ExisteArquivo(vector<struct Ocorrencia> ocorrencias, int arquivo){
+    int sizelist = ocorrencias.size();
+    for(int i = 0; i<sizelist; i++){
+        if(ocorrencias[i].arquivo == arquivo)
+            return true;
+    }
+    return false;
+}
+
+//INSERE UMA NOVA LINHA AO VETOR DE OCORRENCIAS CASO A PALAVRA JÁ TENHA APARECIDO NO ARQUIVO
+void InsereOcorrencia(vector<struct Ocorrencia> &ocorrencias, int arquivo, int linha){
+    int sizelist = ocorrencias.size();
     for(int i = 0; i < sizelist; i++){
-
-        for(int j = i+1; j < sizelist; j++){
-
-            if(lista[j].letras < lista[i].letras){
-
-                lista[i].letras.swap(lista[j].letras);
-                lista[i].linhas.swap(lista[j].linhas);
-            }
-        }
+        if(ocorrencias[i].arquivo == arquivo)
+            ocorrencias[i].linhas.push_back(linha);
     }
 }
-//INSERE A NOVA PALAVRA EM ORDEM ALFABETICA NA LISTA
-void InsereOrdem(vector<struct Palavra> &lista, string palavra, int linha){
 
-
-    struct Palavra nova;
-    nova.letras = palavra;
-    nova.linhas.push_back(linha);
-    lista.push_back(nova);
-    Ordena(lista);
-
-}
 //INSERE UM NOVO VALOR NO VETOR DE LINHAS DE UMA PALAVRA
-void InsereLinha(vector<struct Palavra> &lista, string palavra, int linha){
+void InsereLinha(vector<struct Palavra> &lista, string palavra, int linha, int arquivo){
     int sizelist = lista.size();
     for(int i = 0; i<sizelist; i++){
-
-        if(lista[i].letras == palavra)
-            lista[i].linhas.push_back(linha);
-    }
-}
-//LE AS PALAVRAS DO ARQUIVO
-void LePalavras(vector<struct Palavra> &palavras){
-    ifstream arq;
-    string nomeTexto;
-    cout << "Digite o nome do arquivo texto com extensao: ";
-    cin >> nomeTexto;
-    arq.open(nomeTexto);
-    if(!arq.is_open())
-        cout << "Erro ao abrir arquivo!" << "\n";
-    else{
-        string linha;
-        //LENDO CADA PALAVRA SEPARADAMENTE
-        for(int i=1; getline(arq, linha); i++){
-            string buf; // VARIAVEL PARA RECEBER AS PALAVRAS CONTIDAS EM CADA LINHA
-            stringstream ss(linha); //TRANSFORMA A STRING EM UMA STREAM
-
-                while (ss >> buf){
-                    if(Existe(palavras, buf))
-                        InsereLinha(palavras, buf, i);
-                    else
-                        InsereOrdem(palavras, buf, i);
-                }
+        if(lista[i].letras == palavra){
+            if(ExisteArquivo(lista[i].ocorrencias, arquivo))
+                InsereOcorrencia(lista[i].ocorrencias, arquivo, linha);
+            else{
+                struct Ocorrencia novo = {};
+                novo.arquivo = arquivo;
+                novo.linhas.push_back(linha);
+                lista[i].ocorrencias.push_back(novo);
             }
         }
+    }
+}
+
+//INSERE A NOVA PALAVRA EM ORDEM ALFABETICA NA LISTA
+void InsereOrdem(struct Indice &indice, string palavra, int linha, int arquivo){
+
+    struct Palavra nova = {};
+    nova.letras = palavra;
+    struct Ocorrencia ocorrencia = {};
+    ocorrencia.arquivo = arquivo;
+    ocorrencia.linhas.push_back(linha);
+    nova.ocorrencias.push_back(ocorrencia);
+
+    int sizelist = indice.palavras.size();
+    for(int i = 0; i <sizelist; i ++){
+        if(indice.palavras[i].letras < nova.letras){
+            indice.palavras.insert(indice.palavras.begin() + i + 1, nova);
+            break;
+        }
+    }
+
+}
+
+//LE AS PALAVRAS DE UM ARQUIVO
+void LePalavras(struct Indice &indice, ifstream &arq){
+
+    string linha;
+    //LENDO CADA PALAVRA SEPARADAMENTE
+    for(int i=1; getline(arq, linha); i++){
+        string buf; // VARIAVEL PARA RECEBER AS PALAVRAS CONTIDAS EM CADA LINHA
+        stringstream ss(linha); //TRANSFORMA A STRING EM UMA STREAM
+
+        while (ss >> buf){
+            if(ExistePalavra(indice.palavras, buf))
+                InsereLinha(indice.palavras, buf, i, indice.arquivos.size());
+            else
+                InsereOrdem(indice, buf, i, indice.arquivos.size()); //INSERIR EM ORDEM ALFABETICA E UMA PRIMEIRA ENTRADA NA LISTA DE OCORRENCIA
+                                               //INT REPRESENTANDO A POSIÇÃO NA LISTA DE ARQUIVOS DO ARQUIVO QUE ELA OCORREU
+                                             //QUAIS LINHAS ELA FOI ENCONTRADA
+        }
+    }
+}
+
+void ProcessaArq(struct Indice &indice){
+    //RECEBE O NOME DO ARQUIVO TEXTO
+    ifstream arq;
+    string nomeArq;
+    cout << "Digite o nome do arquivo texto com extensao: ";
+    cin >> nomeArq;
+    arq.open(nomeArq);
+    if(!arq.is_open())
+        cout << "Erro ao tentar abrir arquivo!" << "\n";
+    else{
+        //SE FOI LIDO
+        if(JaFoiLido(indice.arquivos, nomeArq)){
+            cout << "Arquivo ja foi lido e se encontra na lista de arquivos do indice" << "\n";
+        //SE NÃO FOI LIDO
+        }else{
+            indice.arquivos.push_back(nomeArq); //INSERE O NOME DO ARQUIVO NA LISTA DE ARQUIVOS DO INDICE
+            LePalavras(indice, arq);
+        }
+    }
     arq.close();
 }
 
-void GeraArqBin(vector<struct Palavra> &palavras){
+/*void GeraArqBin(vector<struct Palavra> &palavras){
     ofstream outfile;
     outfile.open ("indice.dat", ios :: binary | ios :: out);
     if(!outfile.is_open())
@@ -201,7 +213,7 @@ void LerArqBin(vector<struct Palavra> &lista){
 
             lista.push_back(nova);
         }
-            
+
         // loop para buscar palavras
         do{
             int op;
@@ -215,7 +227,7 @@ void LerArqBin(vector<struct Palavra> &lista){
                 cout << "Digite a palavra a ser buscada: ";
                 cin >> palavra;
                 cout << "\n";
-                
+
                 int sizelist = lista.size();
 
                 if(Existe(lista, palavra)){
@@ -236,38 +248,49 @@ void LerArqBin(vector<struct Palavra> &lista){
 
             }while(op != 2);
     }
-    
+
     infile.close();
 }
 
-
+*/
 int main(){
     int op;
-    vector<struct Palavra> palavras = {};
+    struct Indice indice = {};
 
     //MENU
     do{
-        cout << "Escolha a opcao desejada\n" << "1-Criar um indice para um arquivo texto;\n" << "2-Utilizar um indice existente para realizar buscas por palavras;\n" << "3-Encerrar o programa." << "\n\n";
+        cout << "Escolha a opcao desejada\n" << "1-Processar um arquivo texto;\n" << "2-Utilizar um indice existente para realizar buscas por palavras;\n" << "3-Encerrar o programa." << "\n\n";
         cout << "Opcao: ";
         cin >> op;
         if(op != 1 && op != 2 && op != 3)
             cout << "Digite uma opcao existente!" << "\n";
 
         switch (op){
-            case 1: //CRIAR UM INDICE
-                palavras = {};
-                LePalavras(palavras);
-                GeraArqBin(palavras);
+            case 1:
+                ProcessaArq(indice);
                 break;
 
 
             case 2:
-                palavras = {};
-                LerArqBin(palavras);
+                //palavras = {};
+                //LerArqBin(palavras);
                 break;
         }
 
     }while(op != 3);
 
+    for(int i = 0; i < indice.arquivos.size(); i++){
+        cout << indice.arquivos[i] << "\n";
+    }
+    for(int i = 0; i < indice.palavras.size(); i ++){
+        cout << indice.palavras[i].letras << " ";
+        for(int j = 0; j < indice.palavras[i].ocorrencias.size(); j++){
+            cout << indice.palavras[i].ocorrencias[j].arquivo << " ";
+            for(int k = 0; k < indice.palavras[i].ocorrencias[j].linhas.size(); k++){
+                cout << indice.palavras[i].ocorrencias[j].linhas[k] << " ";
+            }
+        }
+        cout << "\n\n";
+    }
     return 0;
 }
