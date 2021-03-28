@@ -230,7 +230,7 @@ void LeIndice(){
 
             infile.read(reinterpret_cast<char*>(&aux), sizeof(int));
             cout << "Ocorrencias: " << aux << "\n";
-            for(int k = 0; k <= aux; k++){
+            for(; aux > 0;){
                 infile.read(reinterpret_cast<char*>(&aux2), sizeof(int));
                 cout << "No arquivo " << aux2 << ": ";
                 infile.read(reinterpret_cast<char*>(&aux2), sizeof(int));
@@ -273,13 +273,12 @@ int main(){
         }
 
     }while(op != 3);
-	
-	//TESTE NOME DOS ARQUIVOS NO VETOR DO INDICE
+
     /*for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
-    }*/
+    }
 
-    /* TESTE PALAVRAS EM ORDEM
+    //TESTE PALAVRAS EM ORDEM
     for(int i = 0; i < indice.palavras.size(); i ++){
         cout << "Palavra: " << indice.palavras[i].letras << " \n";
         for(int j = 0; j < indice.palavras[i].ocorrencias.size(); j++){
@@ -288,11 +287,12 @@ int main(){
             for(int k = 0; k < indice.palavras[i].ocorrencias[j].linhas.size(); k++){
                 cout << indice.palavras[i].ocorrencias[j].linhas[k] << " ";
             }
+            cout << "\n";
         }
         cout << "\n\n";
-    }
+    }*/
 
-    */
+
 
     return 0;
 }
