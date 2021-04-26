@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <array>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -11,8 +12,8 @@ using namespace std;
 struct Ocorrencia{
     int arquivo;
     vector<int> linhas = {};
-
 };
+
 struct Palavra{
     string letras;
     vector<struct Ocorrencia> ocorrencias = {};
@@ -21,6 +22,7 @@ struct Palavra{
 struct Indice{
     vector<string> arquivos = {}; // Arquivos já lidos e QtdArquivos vai ser o size
     vector<struct Palavra> palavras = {};   // Palavras do indice e QtdPalavras vai ser o size
+    array<int,26> iniciais;
 };
 
 //VERIFICA SE UM ARQUIVO JA FOI LIDO
@@ -96,7 +98,21 @@ void InsereOrdem(struct Indice &indice, string palavra, int linha, int arquivo){
             break;
     }
 
+    //INSERE A PALAVRA EM ORDEM NO INDICE
     indice.palavras.insert(indice.palavras.begin() + i, nova);
+
+    //ARMAZENA A POSIÇÃO DA MENOR PALAVRA NO VETOR INICIAIS
+    int letra = palavra[0] - 97;
+    cout << palavra[0] << " - " << letra << "\n";
+    if(indice.iniciais[letra] == -1){
+        indice.iniciais[letra] = i;
+    }
+
+    //ADICIONA O VALOR 1 A CADA POSIÇÃO NÃO NULA DO VETOR DE INICIAIS
+    for(int j = letra + 1; j <= 26; j++){
+        if(indice.iniciais[j] != -1)
+            indice.iniciais[j]++;
+    }
 }
 
 //LE AS PALAVRAS DE UM ARQUIVO
@@ -251,13 +267,14 @@ void LeIndice(){
 int main(){
     int op;
     struct Indice indice = {};
+    indice.iniciais.fill(-1);
 
     //MENU
     do{
-        cout << "Escolha a opcao desejada\n" << "1-Processar um arquivo texto;\n" << "2-Salvar o indice atual;\n" << "3-Encerrar o programa." << "\n\n";
+        cout << "Escolha a opcao desejada\n" << "1-Processar um arquivo texto;\n" << "2-Salvar o indice atual;\n" << "3-Ler um arquivo de indice;\n" << "4-Realizar buscas usando o indice atual;\n" << "5-Encerrar o programa." << "\n\n";
         cout << "Opcao: ";
         cin >> op;
-        if(op != 1 && op != 2 && op != 3)
+        if(op != 1 && op != 2 && op != 3 && op != 4 && op != 5)
             cout << "Digite uma opcao existente!" << "\n";
 
         switch (op){
@@ -267,12 +284,17 @@ int main(){
 
             case 2:
                 SalvaIndice(indice);
-                //TESTE PARA LER TODOS OS DADOS DO ARQUIVO BINARIO
+                break;
+
+            case 3:
                 LeIndice();
+                break;
+
+            case 4:
                 break;
         }
 
-    }while(op != 3);
+    }while(op != 5);
 
     /*for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
@@ -292,7 +314,9 @@ int main(){
         cout << "\n\n";
     }*/
 
-
+    for(int i : indice.iniciais){
+        cout << i << "\n";
+    }
 
     return 0;
 }
