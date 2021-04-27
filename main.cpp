@@ -105,8 +105,7 @@ void InsereOrdem(struct Indice &indice, string palavra, int linha, int arquivo){
 
     //ARMAZENA A POSIÇÃO DA MENOR PALAVRA NO VETOR INICIAIS
     int letra = palavra[0] - 97;
-    cout << palavra[0] << " - " << letra << "\n";
-    if(indice.iniciais[letra] == -1){   // se tiver vazio
+    if(indice.iniciais[letra] == -1){   //SE TIVER VAZIO
         indice.iniciais[letra] = i;
     }else{
         int pos = indice.iniciais[letra];
@@ -211,7 +210,12 @@ void SalvaIndice(struct Indice &indice){
     outfile.close();
 }
 
-void LeIndice(){
+//LE O INDICE BINARIO E PASSA PARA O VECTOR
+void LeIndice(struct Indice &indice){
+    //ESVAZIA O INDICE
+    indice = {};
+    indice.iniciais.fill(-1);
+
     ifstream infile;
     infile.open("indice.dat", ios :: binary);
     if(!infile.is_open())
@@ -222,48 +226,53 @@ void LeIndice(){
 
         //LE QUANTIDADE DE ARQUIVOS E SUAS QUANTIDADES DE LETRAS E NOMES
         infile.read(reinterpret_cast<char*>(&n), sizeof(int));
-        cout << "Quantidade de arquivos: " << n << "\n\n";
         for(int i=0; i<n; i++){
             infile.read(reinterpret_cast<char*>(&aux), sizeof(int));
-            cout << "Quantidade de letras: " << aux << " - ";
             char cstr[aux];
+            string p;
             for(int l = 0; l < aux; l++){
                 infile.read(&cstr[l], sizeof(char));
-                cout << cstr[l];
+                p.push_back(cstr[l]);
             }
-            cout << "\n";
+            indice.arquivos.push_back(p);
         }
-        cout << "\n";
 
         //LE AS PALAVRAS DO INDICE
         infile.read(reinterpret_cast<char*>(&n), sizeof(int));
-        cout << "Numero de palavras no indice " << n << "\n\n";
         for(int j=0; j<n; j++){
+            struct Palavra nova;
             infile.read(reinterpret_cast<char*>(&aux), sizeof(int));
-            cout << "Quantidade de letras da palavra: " << aux << " - ";
-            cout << "Palavra: ";
             char cstr[aux];
+            string p;
             for(int l = 0; l < aux; l++){
                 infile.read(&cstr[l], sizeof(char));
-                cout << cstr[l];
+                p.push_back(cstr[l]);
             }
-            cout << "\n";
+            nova.letras = p;
 
+            //PREENCHE O INICIAIS DA PRIMEIRA PALAVRA COM UMA DADA LETRA
+            int pos = p[0] - 97;
+            if(indice.iniciais[pos] == -1){
+                indice.iniciais[pos] = j;
+            }
+
+            //PREENCHE AS OCORRENCIAS DA PALAVRA
             infile.read(reinterpret_cast<char*>(&aux), sizeof(int));
-            cout << "Ocorrencias: " << aux << "\n";
             for(; aux > 0;){
+                struct Ocorrencia o;
                 infile.read(reinterpret_cast<char*>(&aux2), sizeof(int));
-                cout << "No arquivo " << aux2 << ": ";
+                o.arquivo = aux2;
                 infile.read(reinterpret_cast<char*>(&aux2), sizeof(int));
-                cout << aux2 << " veze(s). Linha(s): ";
                 aux -=aux2;
 
                 for(int x=0; x<aux2; x++){
                     infile.read(reinterpret_cast<char*>(&aux3), sizeof(int));
-                    cout << aux3 << " ";
+                    o.linhas.push_back(aux3);
                 }
+                nova.ocorrencias.push_back(o);
             }
-            cout << "\n\n";
+            //INSERE A NOVA PALAVRA NO INDICE
+            indice.palavras.push_back(nova);
         }
     }
     infile.close();
@@ -277,26 +286,26 @@ void Busca(struct Indice &indice){
 
     int op;
     do{
-        cout << "1-Busca simples\n" << "2-Busca composta\n" << "3-Sair\n\n" <<;
+        cout << "1-Busca simples\n" << "2-Busca composta\n" << "3-Sair\n\n";
         cout << "Opcao: ";
         cin >> op;
 
         if(op == 1){
             string palavra;
-            cout << "Digite a palavra: "
+            cout << "Digite a palavra: ";
             cin >> palavra;
         }
 
         if(op == 2){
             int op2;
-            cout << "1-Buscar duas palavras com o operador 'E' \n" << "2-Buscar duas palavras com o operador 'OU' \n\n" <<;
+            cout << "1-Buscar duas palavras com o operador 'E' \n" << "2-Buscar duas palavras com o operador 'OU' \n\n";
             cout << "Opcao: ";
             cin >> op2;
 
             string palavra1, palavra2;
-            cout << "Digite a primeira palavra: " <<;
+            cout << "Digite a primeira palavra: ";
             cin >> palavra1;
-            cout << "\n Digite a segunda palavra: " <<;
+            cout << "\n Digite a segunda palavra: ";
             cin >> palavra2;
         }
 
@@ -328,17 +337,17 @@ int main(){
                 break;
 
             case 3:
-                LeIndice();
+                LeIndice(indice);
                 break;
 
             case 4:
-                Busca(indice)
+                Busca(indice);
                 break;
         }
 
     }while(op != 5);
 
-    /*for(int i = 0; i < indice.arquivos.size(); i++){
+    for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
     }
     //TESTE PALAVRAS EM ORDEM
@@ -353,7 +362,7 @@ int main(){
             cout << "\n";
         }
         cout << "\n\n";
-    }*/
+    }
 
     for(int i : indice.iniciais){
         cout << i << "\n";
