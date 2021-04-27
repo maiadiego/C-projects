@@ -278,12 +278,41 @@ void LeIndice(struct Indice &indice){
     infile.close();
 }
 
-void Busca(struct Indice &indice){
-    ifstream infile;
-    infile.open("indice.dat", ios :: binary);
-    if(!infile.is_open())
-        cout << "Erro ao abrir o arquivo" << "\n";
+//MOSTRA OCORRENCIAS DE UMA PALAVRA QUE ESTÁ NO INDICE
+void MostraPalavra(struct Palavra palavra){
 
+    cout << palavra.letras;
+
+    int tam = palavra.ocorrencias.size();
+
+    for(int i = 0; i < tam; i++){
+        cout << "No arquivo: " << palavra.ocorrencias[i].arquivo << "\n";
+        int tl = palavra.ocorrencias[i].linhas.size();
+        cout << "Linhas: ";
+        for(int j = 0; j < tl; j++){
+            cout << palavra.ocorrencias[i].linhas[j] << " ";
+        }
+        cout << "\n\n";
+    }
+
+}
+
+//RETORNA A POSICAO SE UMA DADA PALAVRA NO INDICE
+int BuscaSimples(string palavra, struct Indice indice){
+
+    int pos = palavra[0] - 97;
+    int i = indice.iniciais[pos];
+    int fim = indice.iniciais.size();
+    for(i; i < fim; i++){
+        if(palavra == indice.palavras[i].letras)
+            return i;
+    }
+    return -1;
+
+}
+
+//REALIZA BUSCAS NO INDICE ATUAL
+void Busca(struct Indice &indice){
     int op;
     do{
         cout << "1-Busca simples\n" << "2-Busca composta\n" << "3-Sair\n\n";
@@ -294,6 +323,16 @@ void Busca(struct Indice &indice){
             string palavra;
             cout << "Digite a palavra: ";
             cin >> palavra;
+
+            int pos = palavra[0] - 97;
+            int i = indice.iniciais[pos];
+            int fim = indice.iniciais.size();
+            for(i; i < fim; i++){
+                if(palavra == indice.palavras[i].letras){
+                MostraPalavra(indice.palavras[i]);
+                break;
+                }
+            }
         }
 
         if(op == 2){
@@ -305,11 +344,31 @@ void Busca(struct Indice &indice){
             string palavra1, palavra2;
             cout << "Digite a primeira palavra: ";
             cin >> palavra1;
-            cout << "\n Digite a segunda palavra: ";
+            cout << "\nDigite a segunda palavra: ";
             cin >> palavra2;
+
+            if(op2 == 1){
+                int pos1 = BuscaSimples(palavra1, indice);
+                int pos2 = BuscaSimples(palavra2, indice);
+
+                if(pos1 != -1 && pos2!= -1){
+                    int tam1 = indice.palavras[pos1].ocorrencias.size();
+                    int tam2 = indice.palavras[pos2].ocorrencias.size();
+
+                    for(int i = 0; i < tam1; i++){
+                        for(int j = 0; j < tam2; j++){
+
+                            if(indice.palavras[pos1].ocorrencias[i].arquivo == indice.palavras[pos2].ocorrencias[j].arquivo)
+                                cout << indice.arquivos[indice.palavras[pos1].ocorrencias[i].arquivo - 1] << " ";
+                        }
+                    }
+                    cout << "\n";
+                }
+            }
+            if(op2 == 2){
+
+            }
         }
-
-
 
     }while(op !=3);
 }
