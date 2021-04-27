@@ -7,6 +7,8 @@
 #include <string>
 #include <string.h>
 
+// Guilherme da Costa e Diego Maia
+
 using namespace std;
 
 struct Ocorrencia{
@@ -104,10 +106,13 @@ void InsereOrdem(struct Indice &indice, string palavra, int linha, int arquivo){
     //ARMAZENA A POSIÇÃO DA MENOR PALAVRA NO VETOR INICIAIS
     int letra = palavra[0] - 97;
     cout << palavra[0] << " - " << letra << "\n";
-    if(indice.iniciais[letra] == -1){
+    if(indice.iniciais[letra] == -1){   // se tiver vazio
         indice.iniciais[letra] = i;
+    }else{
+        int pos = indice.iniciais[letra];
+        if(nova.letras < indice.palavras[pos].letras)
+            indice.iniciais[letra] = i;
     }
-
     //ADICIONA O VALOR 1 A CADA POSIÇÃO NÃO NULA DO VETOR DE INICIAIS
     for(int j = letra + 1; j <= 26; j++){
         if(indice.iniciais[j] != -1)
@@ -264,6 +269,42 @@ void LeIndice(){
     infile.close();
 }
 
+void Busca(struct Indice &indice){
+    ifstream infile;
+    infile.open("indice.dat", ios :: binary);
+    if(!infile.is_open())
+        cout << "Erro ao abrir o arquivo" << "\n";
+
+    int op;
+    do{
+        cout << "1-Busca simples\n" << "2-Busca composta\n" << "3-Sair\n\n" <<;
+        cout << "Opcao: ";
+        cin >> op;
+
+        if(op == 1){
+            string palavra;
+            cout << "Digite a palavra: "
+            cin >> palavra;
+        }
+
+        if(op == 2){
+            int op2;
+            cout << "1-Buscar duas palavras com o operador 'E' \n" << "2-Buscar duas palavras com o operador 'OU' \n\n" <<;
+            cout << "Opcao: ";
+            cin >> op2;
+
+            string palavra1, palavra2;
+            cout << "Digite a primeira palavra: " <<;
+            cin >> palavra1;
+            cout << "\n Digite a segunda palavra: " <<;
+            cin >> palavra2;
+        }
+
+
+
+    }while(op !=3);
+}
+
 int main(){
     int op;
     struct Indice indice = {};
@@ -291,6 +332,7 @@ int main(){
                 break;
 
             case 4:
+                Busca(indice)
                 break;
         }
 
@@ -299,7 +341,6 @@ int main(){
     /*for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
     }
-
     //TESTE PALAVRAS EM ORDEM
     for(int i = 0; i < indice.palavras.size(); i ++){
         cout << "Palavra: " << indice.palavras[i].letras << " \n";
