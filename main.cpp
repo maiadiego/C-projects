@@ -344,7 +344,7 @@ void Busca(struct Indice &indice){
             string palavra1, palavra2;
             cout << "Digite a primeira palavra: ";
             cin >> palavra1;
-            cout << "\nDigite a segunda palavra: ";
+            cout << "Digite a segunda palavra: ";
             cin >> palavra2;
 
             if(op2 == 1){
@@ -366,7 +366,31 @@ void Busca(struct Indice &indice){
                 }
             }
             if(op2 == 2){
+                int pos1 = BuscaSimples(palavra1, indice);
+                int pos2 = BuscaSimples(palavra2, indice);
 
+                if(pos1 != -1 && pos2!= -1){
+                    int tam1 = indice.palavras[pos1].ocorrencias.size();
+                    int tam2 = indice.palavras[pos2].ocorrencias.size();
+
+                    // imprimindo para a a palavra1
+                    for(int i=0; i<tam1; i++){
+                        int igual=0;
+                        for(int j=0; j<tam2; j++){
+                            if(indice.palavras[pos1].ocorrencias[i].arquivo == indice.palavras[pos2].ocorrencias[j].arquivo){
+                                igual +=1;
+                            }
+                        }
+                        if(igual == 0){
+                            cout << indice.arquivos[indice.palavras[pos1].ocorrencias[i].arquivo - 1] << " ";
+                        }
+                    }
+                    // imprimindo para a a palavra2
+                    for(int k=0; k<tam2; k++){
+                            cout << indice.arquivos[indice.palavras[pos2].ocorrencias[k].arquivo - 1] << " ";
+                    }
+                    cout << "\n\n";
+                }
             }
         }
 
@@ -406,7 +430,7 @@ int main(){
 
     }while(op != 5);
 
-    for(int i = 0; i < indice.arquivos.size(); i++){
+    /*for(int i = 0; i < indice.arquivos.size(); i++){
         cout << indice.arquivos[i] << "\n";
     }
     //TESTE PALAVRAS EM ORDEM
@@ -425,7 +449,7 @@ int main(){
 
     for(int i : indice.iniciais){
         cout << i << "\n";
-    }
+    } */
 
     return 0;
 }
