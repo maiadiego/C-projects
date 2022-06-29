@@ -1,0 +1,43 @@
+------Ponteiro v------
+Foi declarado o ponteiro no endereco 124
+
+------Ponteiro w------
+Foi declarado o ponteiro no endereco 4202080
+
+------Ponteiro c------
+Foi declarado o ponteiro no endereco 8
+
+------Ponteiro v------
+O ponteiro agora aponta para o endereco 10096000 do heap
+O ponteiro tem valor 10
+O endereco 10096000 agora tem 1 apontamento(s)
+
+------Ponteiro w------
+O ponteiro agora aponta para o endereco 10096096 do heap
+O ponteiro tem valor 20
+O endereco 10096096 agora tem 1 apontamento(s)
+
+------Ponteiro v------
+A area 10096000 agora tem 0 apontamentos e foi liberada
+O ponteiro agora aponta para o endereco 10096096 do heap
+O ponteiro tem valor 20
+O endereco 10096096 agora tem 2 apontamento(s)
+
+------Ponteiro w------
+O ponteiro agora aponta para o endereco 10096096 do heap
+O ponteiro tem valor 20
+O endereco 10096096 agora tem 2 apontamento(s)
+
+------Ponteiro c------
+O ponteiro agora aponta para o endereco 10096000 do heap
+O ponteiro tem valor 90
+O endereco 10096000 agora tem 1 apontamento(s)
+
+------Ponteiro v------
+O ponteiro agora e nulo
+
+------Ponteiro w------
+O ponteiro agora aponta para o endereco 10096096 do heap
+O ponteiro tem valor 20
+O endereco 10096096 agora tem 1 apontamento(s)
+
